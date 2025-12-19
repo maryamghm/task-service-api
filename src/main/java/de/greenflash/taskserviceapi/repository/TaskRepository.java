@@ -9,9 +9,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
-    Page<Task> findByOwner_Username(String ownerUsername, Pageable pageable);
+    Page<Task> findByOwnerUsername(String ownerUsername, Pageable pageable);
 
-    List<Task> findByOwner_Username(String ownerUsername, Sort sort);
+    List<Task> findByOwnerUsername(String ownerUsername, Sort sort);
 
-    Optional<Task> findByIdAndOwner_Username(Long id, String ownerUsername);
+    Optional<Task> findByIdAndOwnerUsername(Long id, String ownerUsername);
 }

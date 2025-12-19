@@ -17,6 +17,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import de.greenflash.taskserviceapi.dto.CreateTaskRequest;
+import de.greenflash.taskserviceapi.dto.UpdateTaskRequest;
 
 @Entity
 @Table(name = "tasks")
@@ -55,4 +57,20 @@ public class Task {
     @EqualsAndHashCode.Exclude
     private User owner;
 
+    public static Task from(CreateTaskRequest request, User owner) {
+        Task task = new Task();
+        task.setTitle(request.title());
+        task.setDescription(request.description());
+        task.setStatus(TaskStatus.TODO);
+        task.setPriority(request.priority() != null ? request.priority() : TaskPriority.MEDIUM);
+        task.setOwner(owner);
+        return task;
+    }
+
+    public void apply(UpdateTaskRequest request) {
+        setTitle(request.title());
+        setDescription(request.description());
+        setStatus(request.status());
+        setPriority(request.priority());
+    }
 }

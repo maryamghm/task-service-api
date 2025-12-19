@@ -17,11 +17,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserService userService;
 
+    /**
+     * Extract and validate JWT from the Authorization header.
+     */
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -33,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String token = authHeader.substring(7);
+        String token = authHeader.split(" ")[1];
         try {
             String username = jwtService.extractUsername(token);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -50,6 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (JwtException ex) {
             // Invalid JWT; proceed without authentication.
+            SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);

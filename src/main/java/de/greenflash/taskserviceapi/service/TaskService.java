@@ -12,19 +12,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
+import de.greenflash.taskserviceapi.exception.ResourceNotFoundException;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class TaskService {
 
+    // Handles task lifecycle operations scoped to the authenticated user.
     private final TaskRepository taskRepository;
     private final UserService userService;
 
+    /**
+     * Create a task owned by the given username.
+     */
     public TaskResponse createTask(String ownerUsername, CreateTaskRequest request) {
         User owner = userService.findByUsername(ownerUsername);
         Task task = Task.from(request, owner);
@@ -32,38 +35,54 @@ public class TaskService {
         return TaskResponse.from(saved);
     }
 
+    /**
+     * Return a paginated view of the user's tasks.
+     */
     @Transactional(readOnly = true)
     public Page<TaskResponse> listTasksPage(String ownerUsername, Pageable pageable) {
         return taskRepository.findByOwnerUsername(ownerUsername, pageable)
                 .map(TaskResponse::from);
     }
 
+    /**
+     * Return all tasks for the user with optional sorting.
+     */
     @Transactional(readOnly = true)
     public List<TaskResponse> listTasks(String ownerUsername, Sort sort) {
         List<Task> tasks = taskRepository.findByOwnerUsername(ownerUsername, sort);
         return toResponses(tasks);
     }
 
+    /**
+     * Fetch a single task scoped to the user.
+     */
     @Transactional(readOnly = true)
     public TaskResponse getTask(String ownerUsername, Long id) {
         Task task = taskRepository.findByIdAndOwnerUsername(id, ownerUsername)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
         return TaskResponse.from(task);
     }
 
+    /**
+     * Update a task owned by the user.
+     */
     public TaskResponse updateTask(String ownerUsername, Long id, UpdateTaskRequest request) {
         Task task = taskRepository.findByIdAndOwnerUsername(id, ownerUsername)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
         task.apply(request);
         return TaskResponse.from(task);
     }
 
+    /**
+     * Delete a task owned by the user.
+     */
     public void deleteTask(String ownerUsername, Long id) {
         Task task = taskRepository.findByIdAndOwnerUsername(id, ownerUsername)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
         taskRepository.delete(task);
     }
 
+    // Convert entities to API response records.
     private List<TaskResponse> toResponses(List<Task> tasks) {
         return tasks.stream()
                 .map(TaskResponse::from)

@@ -57,6 +57,9 @@ public class Task {
     @EqualsAndHashCode.Exclude
     private User owner;
 
+    /**
+     * Factory for task creation with defaults.
+     */
     public static Task from(CreateTaskRequest request, User owner) {
         Task task = new Task();
         task.setTitle(request.title());
@@ -67,6 +70,9 @@ public class Task {
         return task;
     }
 
+    /**
+     * Apply a full update request onto this task.
+     */
     public void apply(UpdateTaskRequest request) {
         setTitle(request.title());
         setDescription(request.description());

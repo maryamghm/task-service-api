@@ -9,6 +9,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DataInitializer {
 
+    /**
+     * Seed the required demo users on startup.
+     */
     @Bean
     public CommandLineRunner initUsers(UserService userService) {
         return args -> userService.ensureUsersExist(List.of("UserA", "UserB"));

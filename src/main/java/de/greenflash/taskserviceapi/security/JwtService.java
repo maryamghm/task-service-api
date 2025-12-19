@@ -15,8 +15,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class JwtService {
 
+    // Generates and validates JWTs using a shared HMAC secret.
     private final JwtProperties jwtProperties;
 
+    /**
+     * Create a signed JWT for the given username.
+     */
     public String generateToken(String username) {
         Instant now = Instant.now();
         return Jwts.builder()
@@ -27,15 +31,22 @@ public class JwtService {
                 .compact();
     }
 
+    /**
+     * Extract the username from a valid JWT.
+     */
     public String extractUsername(String token) {
         return parseClaims(token).getSubject();
     }
 
+    /**
+     * Validate signature, expiration, and subject.
+     */
     public boolean isTokenValid(String token, String username) {
         Claims claims = parseClaims(token);
         return username.equals(claims.getSubject()) && !claims.getExpiration().before(new Date());
     }
 
+    // Parse and verify a signed JWT.
     private Claims parseClaims(String token) {
         return Jwts.parser()
                 .verifyWith(signingKey())
@@ -44,6 +55,7 @@ public class JwtService {
                 .getPayload();
     }
 
+    // Create an HMAC signing key from the configured secret.
     private Key signingKey() {
         return Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
     }

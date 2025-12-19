@@ -13,6 +13,7 @@ import lombok.Data;
 @Data
 public class User {
 
+    // Minimal user representation for authentication.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

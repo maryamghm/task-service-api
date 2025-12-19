@@ -14,6 +14,9 @@ public record TaskResponse(
         Instant createdAt,
         Instant updatedAt
 ) {
+    /**
+     * Map a Task entity into an API response.
+     */
     public static TaskResponse from(Task task) {
         return new TaskResponse(
                 task.getId(),

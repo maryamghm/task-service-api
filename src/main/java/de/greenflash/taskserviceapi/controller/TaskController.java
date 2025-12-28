@@ -43,7 +43,7 @@ public class TaskController {
     public TaskResponse createTask(
             Authentication authentication,
             @Valid @RequestBody CreateTaskRequest request) {
-        return taskService.createTask(authentication.getName(), request);
+        return TaskResponse.from(taskService.createTask(authentication.getName(), request));
     }
 
     /**
@@ -59,7 +59,8 @@ public class TaskController {
         validateSort(effectiveSort);
         return taskService.listTasksPage(
                 authentication.getName(),
-                PageRequest.of(page, size, effectiveSort));
+                PageRequest.of(page, size, effectiveSort))
+                .map(TaskResponse::from);
     }
 
     /**
@@ -67,7 +68,7 @@ public class TaskController {
      */
     @GetMapping("/{id}")
     public TaskResponse getTask(Authentication authentication, @PathVariable Long id) {
-        return taskService.getTask(authentication.getName(), id);
+        return TaskResponse.from(taskService.getTask(authentication.getName(), id));
     }
 
     /**
@@ -78,7 +79,7 @@ public class TaskController {
             Authentication authentication,
             @PathVariable Long id,
             @Valid @RequestBody UpdateTaskRequest request) {
-        return taskService.updateTask(authentication.getName(), id, request);
+        return TaskResponse.from(taskService.updateTask(authentication.getName(), id, request));
     }
 
     /**

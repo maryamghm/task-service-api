@@ -13,5 +13,5 @@ spring:
 
 app:
   jwt:
-    secret: "change-this-secret-to-a-strong-long-value-32bytes-minimum"
+    secret: $SECRET
     expiration-ms: 3600000

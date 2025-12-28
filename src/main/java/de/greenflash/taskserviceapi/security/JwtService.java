@@ -8,8 +8,12 @@ import java.security.Key;
 import de.greenflash.taskserviceapi.config.JwtProperties;
 import java.time.Instant;
 import java.util.Date;
+
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
 
 @Component
 @RequiredArgsConstructor
@@ -17,6 +21,9 @@ public class JwtService {
 
     // Generates and validates JWTs using a shared HMAC secret.
     private final JwtProperties jwtProperties;
+
+    // Create an HMAC signing key from the configured secret.
+    private final SecretKey signingKey;
 
     /**
      * Create a signed JWT for the given username.
@@ -27,7 +34,7 @@ public class JwtService {
                 .subject(username)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusMillis(jwtProperties.getExpirationMs())))
-                .signWith(signingKey())
+                .signWith(signingKey)
                 .compact();
     }
 
@@ -49,14 +56,10 @@ public class JwtService {
     // Parse and verify a signed JWT.
     private Claims parseClaims(String token) {
         return Jwts.parser()
-                .verifyWith(signingKey())
+                .verifyWith(signingKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
     }
 
-    // Create an HMAC signing key from the configured secret.
-    private Key signingKey() {
-        return Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
-    }
 }

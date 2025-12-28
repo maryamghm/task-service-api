@@ -11,5 +11,5 @@ spring:
 
 app:
   jwt:
-    secret: "test-secret-should-be-long-enough-for-hmac-signing-32bytes"
+    secret: ${SECRET:"test-secret-should-be-long-enough-for-hmac-signing-32bytes"}
     expiration-ms: 3600000

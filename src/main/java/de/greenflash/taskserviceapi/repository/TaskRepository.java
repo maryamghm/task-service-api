@@ -11,7 +11,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TaskRepository extends JpaRepository<Task, Long> {
     Page<Task> findByOwnerUsername(String ownerUsername, Pageable pageable);
 
-    List<Task> findByOwnerUsername(String ownerUsername, Sort sort);
-
     Optional<Task> findByIdAndOwnerUsername(Long id, String ownerUsername);
 }

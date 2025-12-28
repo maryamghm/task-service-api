@@ -45,15 +45,6 @@ public class TaskService {
     }
 
     /**
-     * Return all tasks for the user with optional sorting.
-     */
-    @Transactional(readOnly = true)
-    public List<TaskResponse> listTasks(String ownerUsername, Sort sort) {
-        List<Task> tasks = taskRepository.findByOwnerUsername(ownerUsername, sort);
-        return toResponses(tasks);
-    }
-
-    /**
      * Fetch a single task scoped to the user.
      */
     @Transactional(readOnly = true)
@@ -80,12 +71,5 @@ public class TaskService {
         Task task = taskRepository.findByIdAndOwnerUsername(id, ownerUsername)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
         taskRepository.delete(task);
-    }
-
-    // Convert entities to API response records.
-    private List<TaskResponse> toResponses(List<Task> tasks) {
-        return tasks.stream()
-                .map(TaskResponse::from)
-                .collect(Collectors.toList());
     }
 }

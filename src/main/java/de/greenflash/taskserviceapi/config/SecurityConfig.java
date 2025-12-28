@@ -1,9 +1,11 @@
 package de.greenflash.taskserviceapi.config;
 
+import de.greenflash.taskserviceapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,6 +23,8 @@ public class SecurityConfig {
 
     // Configures stateless JWT security for API endpoints.
     private final JwtFilter jwtFilter;
+    private final UserService userService;
+
 
     /**
      * Configure security filters and access rules.
@@ -50,7 +54,13 @@ public class SecurityConfig {
      * Authentication manager for username/password login.
      */
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
+    AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder passwordEncoder) throws Exception {
+        AuthenticationManagerBuilder managerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+
+        managerBuilder
+                .userDetailsService(userService)
+                .passwordEncoder(passwordEncoder);
+
+        return managerBuilder.build();
     }
 }

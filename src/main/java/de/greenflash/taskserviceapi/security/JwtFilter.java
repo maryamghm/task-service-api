@@ -35,16 +35,13 @@ public class JwtFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
         String token = resolveToken(request);
-        if (token == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        try {
-            authenticate(token, request);
-        } catch (JwtException ex) {
-            // Invalid JWT; proceed without authentication.
-            SecurityContextHolder.clearContext();
+        if (token != null) {
+            try {
+                authenticate(token, request);
+            } catch (JwtException ex) {
+                // Invalid JWT; proceed without authentication.
+                SecurityContextHolder.clearContext();
+            }
         }
 
         filterChain.doFilter(request, response);

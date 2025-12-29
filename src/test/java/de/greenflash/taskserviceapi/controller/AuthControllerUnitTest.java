@@ -1,0 +1,86 @@
+package de.greenflash.taskserviceapi.controller;
+
+import static de.greenflash.taskserviceapi.TestFixtures.USER_A_PASSWORD;
+import static de.greenflash.taskserviceapi.TestFixtures.USER_A_USERNAME;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import de.greenflash.taskserviceapi.exception.GlobalExceptionHandler;
+import de.greenflash.taskserviceapi.security.JwtService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.verification.VerificationMode;
+import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+@ExtendWith(MockitoExtension.class)
+class AuthControllerUnitTest {
+
+    @Mock
+    private AuthenticationManager authenticationManager;
+
+    @Mock
+    private JwtService jwtService;
+
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+        validator.afterPropertiesSet();
+
+        mockMvc = MockMvcBuilders.standaloneSetup(new AuthController(authenticationManager, jwtService))
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .setValidator(validator)
+                .build();
+    }
+
+    @Test
+    void loginReturnsToken() throws Exception {
+        Authentication authentication = new UsernamePasswordAuthenticationToken(USER_A_USERNAME, "N/A");
+        when(authenticationManager.authenticate(any(Authentication.class))).thenReturn(authentication);
+        when(jwtService.generateToken(USER_A_USERNAME)).thenReturn("token-123");
+
+        String payload = """
+                {
+                  "username": "%s",
+                  "password": "%s"
+                }
+                """.formatted(USER_A_USERNAME, USER_A_PASSWORD);
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value("token-123"));
+    }
+
+    @Test
+    void loginRejectsBlankUsername() throws Exception {
+        String payload = """
+                {
+                  "username": " ",
+                  "password": "%s"
+                }
+                """.formatted(USER_A_PASSWORD);
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Validation failed"));
+
+        verifyNoInteractions(authenticationManager, jwtService);
+    }
+}

@@ -16,11 +16,15 @@ public final class TestFixtures {
 
     public static final String TASK_TITLE = "Write tests";
     public static final String TASK_DESCRIPTION = "Cover task controller";
+    public static final TaskPriority TASK_PRIORITY = TaskPriority.MEDIUM;
+    public static final TaskStatus TASK_STATUS = TaskStatus.TODO;
+    public static final Long TASK_ID = 10L;
+    public static final Long TASK_ID_NOT_FOUND = 99L;
 
     public static final CreateTaskRequest CREATE_TASK_REQUEST = new CreateTaskRequest(
             TASK_TITLE,
             TASK_DESCRIPTION,
-            TaskPriority.HIGH);
+            TASK_PRIORITY);
 
     public static final CreateTaskRequest CREATE_TASK_REQUEST_WITHOUT_PRIORITY = new CreateTaskRequest(
             TASK_TITLE,
@@ -30,13 +34,13 @@ public final class TestFixtures {
     public static final CreateTaskRequest INVALID_CREATE_TASK_REQUEST = new CreateTaskRequest(
             " ",
             TASK_DESCRIPTION,
-            TaskPriority.LOW);
+            TASK_PRIORITY);
 
     public static final UpdateTaskRequest UPDATE_TASK_REQUEST = new UpdateTaskRequest(
             "Final title",
             "Updated description",
-            TaskStatus.IN_PROGRESS,
-            TaskPriority.MEDIUM);
+            TASK_STATUS,
+            TASK_PRIORITY);
 
     public static final String JWT_SECRET = "test-secret-should-be-long-enough-for-hmac-signing-32bytes";
 
@@ -62,8 +66,8 @@ public final class TestFixtures {
         Task task = new Task();
         task.setTitle(title);
         task.setDescription(TASK_DESCRIPTION);
-        task.setStatus(TaskStatus.TODO);
-        task.setPriority(TaskPriority.MEDIUM);
+        task.setStatus(TASK_STATUS);
+        task.setPriority(TASK_PRIORITY);
         task.setOwner(owner);
         return task;
     }

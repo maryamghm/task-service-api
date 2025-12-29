@@ -59,8 +59,8 @@ public class TaskController {
         validateSort(effectiveSort);
         return taskService.listTasksPage(
                 authentication.getName(),
-                PageRequest.of(page, size, effectiveSort))
-                .map(TaskResponse::from);
+                PageRequest.of(page, size, effectiveSort)
+                ).map(TaskResponse::from);
     }
 
     /**

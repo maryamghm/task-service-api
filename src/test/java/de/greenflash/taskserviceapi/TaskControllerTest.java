@@ -1,5 +1,7 @@
 package de.greenflash.taskserviceapi;
 
+import static de.greenflash.taskserviceapi.TestFixtures.TASK_PRIORITY;
+import static de.greenflash.taskserviceapi.TestFixtures.TASK_STATUS;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -58,9 +60,9 @@ class TaskControllerTest {
                 {
                   "title": "Write tests",
                   "description": "Cover task controller",
-                  "priority": "HIGH"
+                  "priority": "%s"
                 }
-                """;
+                """.formatted(TASK_PRIORITY.name());
 
         MvcResult createResult = mockMvc.perform(post("/api/task")
                         .header("Authorization", "Bearer " + token)
@@ -92,9 +94,9 @@ class TaskControllerTest {
                 {
                   "title": "UserA Task",
                   "description": "Private",
-                  "priority": "MEDIUM"
+                  "priority": "%s"
                 }
-                """;
+                """.formatted(TASK_PRIORITY.name());
 
         MvcResult createResult = mockMvc.perform(post("/api/task")
                         .header("Authorization", "Bearer " + tokenA)
@@ -118,9 +120,9 @@ class TaskControllerTest {
                 {
                   "title": "Draft",
                   "description": "Initial",
-                  "priority": "LOW"
+                  "priority": "%s"
                 }
-                """;
+                """.formatted(TASK_PRIORITY.name());
 
         MvcResult createResult = mockMvc.perform(post("/api/task")
                         .header("Authorization", "Bearer " + token)
@@ -136,10 +138,10 @@ class TaskControllerTest {
                 {
                   "title": "Final",
                   "description": "Updated",
-                  "status": "IN_PROGRESS",
-                  "priority": "HIGH"
+                  "status": "%s",
+                  "priority": "%s"
                 }
-                """;
+                """.formatted(TASK_STATUS.name(), TASK_PRIORITY.name());
 
         mockMvc.perform(put("/api/task/" + taskId)
                         .header("Authorization", "Bearer " + token)
@@ -147,7 +149,7 @@ class TaskControllerTest {
                         .content(updatePayload))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Final"))
-                .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
+                .andExpect(jsonPath("$.status").value(TASK_STATUS.name()));
 
         mockMvc.perform(delete("/api/task/" + taskId)
                         .header("Authorization", "Bearer " + token))

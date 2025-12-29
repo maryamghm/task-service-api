@@ -1,5 +1,6 @@
 package de.greenflash.taskserviceapi.controller;
 
+import static de.greenflash.taskserviceapi.TestFixtures.TASK_PRIORITY;
 import static de.greenflash.taskserviceapi.TestFixtures.USER_A_PASSWORD;
 import static de.greenflash.taskserviceapi.TestFixtures.USER_A_USERNAME;
 import static org.hamcrest.Matchers.hasSize;
@@ -49,8 +50,8 @@ class TaskControllerIntegrationTest {
     @Test
     void listTasksSupportsPagination() throws Exception {
         String token = login(USER_A_USERNAME, USER_A_PASSWORD);
-        createTask(token, "Task 1", "First", "LOW");
-        createTask(token, "Task 2", "Second", "HIGH");
+        createTask(token, "Task 1", "First");
+        createTask(token, "Task 2", "Second");
 
         mockMvc.perform(get("/api/task")
                         .param("page", "0")
@@ -79,9 +80,9 @@ class TaskControllerIntegrationTest {
                 {
                   "title": " ",
                   "description": "Invalid",
-                  "priority": "LOW"
+                  "priority": "%s"
                 }
-                """;
+                """.formatted(TASK_PRIORITY.name());
 
         mockMvc.perform(post("/api/task")
                         .header("Authorization", "Bearer " + token)
@@ -91,14 +92,14 @@ class TaskControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Validation failed"));
     }
 
-    private void createTask(String token, String title, String description, String priority) throws Exception {
+    private void createTask(String token, String title, String description) throws Exception {
         String payload = """
                 {
                   "title": "%s",
                   "description": "%s",
                   "priority": "%s"
                 }
-                """.formatted(title, description, priority);
+                """.formatted(title, description, TASK_PRIORITY.name());
 
         mockMvc.perform(post("/api/task")
                         .header("Authorization", "Bearer " + token)

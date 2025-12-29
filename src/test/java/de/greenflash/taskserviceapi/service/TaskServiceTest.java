@@ -1,6 +1,10 @@
 package de.greenflash.taskserviceapi.service;
 
 import static de.greenflash.taskserviceapi.TestFixtures.CREATE_TASK_REQUEST;
+import static de.greenflash.taskserviceapi.TestFixtures.TASK_ID;
+import static de.greenflash.taskserviceapi.TestFixtures.TASK_ID_NOT_FOUND;
+import static de.greenflash.taskserviceapi.TestFixtures.TASK_PRIORITY;
+import static de.greenflash.taskserviceapi.TestFixtures.TASK_STATUS;
 import static de.greenflash.taskserviceapi.TestFixtures.TASK_TITLE;
 import static de.greenflash.taskserviceapi.TestFixtures.UPDATE_TASK_REQUEST;
 import static de.greenflash.taskserviceapi.TestFixtures.USER_A_USERNAME;
@@ -12,8 +16,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import de.greenflash.taskserviceapi.entity.Task;
-import de.greenflash.taskserviceapi.entity.TaskPriority;
-import de.greenflash.taskserviceapi.entity.TaskStatus;
 import de.greenflash.taskserviceapi.entity.User;
 import de.greenflash.taskserviceapi.exception.ResourceNotFoundException;
 import de.greenflash.taskserviceapi.repository.TaskRepository;
@@ -47,37 +49,34 @@ class TaskServiceTest {
         when(userService.findByUsername(USER_A_USERNAME)).thenReturn(owner);
 
         Task saved = new Task();
-        saved.setId(42L);
+        saved.setId(TASK_ID);
         saved.setTitle(CREATE_TASK_REQUEST.title());
         saved.setDescription(CREATE_TASK_REQUEST.description());
-        saved.setStatus(TaskStatus.TODO);
-        saved.setPriority(TaskPriority.HIGH);
+        saved.setStatus(TASK_STATUS);
+        saved.setPriority(TASK_PRIORITY);
         saved.setOwner(owner);
 
         when(taskRepository.save(any(Task.class))).thenReturn(saved);
 
         Task response = taskService.createTask(USER_A_USERNAME, CREATE_TASK_REQUEST);
 
-        assertThat(response.getId()).isEqualTo(42L);
-        assertThat(response.getTitle()).isEqualTo(TASK_TITLE);
-        assertThat(response.getStatus()).isEqualTo(TaskStatus.TODO);
-        assertThat(response.getPriority()).isEqualTo(TaskPriority.HIGH);
+        assertThat(response).isEqualTo(saved);
 
         ArgumentCaptor<Task> captor = ArgumentCaptor.forClass(Task.class);
         verify(taskRepository).save(captor.capture());
         Task persisted = captor.getValue();
         assertThat(persisted.getOwner()).isEqualTo(owner);
-        assertThat(persisted.getStatus()).isEqualTo(TaskStatus.TODO);
-        assertThat(persisted.getPriority()).isEqualTo(TaskPriority.HIGH);
+        assertThat(persisted.getStatus()).isEqualTo(TASK_STATUS);
+        assertThat(persisted.getPriority()).isEqualTo(TASK_PRIORITY);
     }
 
     @Test
     void listTasksPageMapsEntities() {
         Task task = new Task();
-        task.setId(7L);
+        task.setId(TASK_ID);
         task.setTitle("Task 7");
-        task.setStatus(TaskStatus.TODO);
-        task.setPriority(TaskPriority.LOW);
+        task.setStatus(TASK_STATUS);
+        task.setPriority(TASK_PRIORITY);
 
         Page<Task> page = new PageImpl<>(List.of(task));
         when(taskRepository.findByOwnerUsername(USER_A_USERNAME, PageRequest.of(0, 5)))
@@ -91,10 +90,10 @@ class TaskServiceTest {
 
     @Test
     void getTaskThrowsWhenMissing() {
-        when(taskRepository.findByIdAndOwnerUsername(99L, USER_A_USERNAME))
+        when(taskRepository.findByIdAndOwnerUsername(TASK_ID_NOT_FOUND, USER_A_USERNAME))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> taskService.getTask(USER_A_USERNAME, 99L))
+        assertThatThrownBy(() -> taskService.getTask(USER_A_USERNAME, TASK_ID_NOT_FOUND))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("Task not found");
     }
@@ -102,16 +101,16 @@ class TaskServiceTest {
     @Test
     void updateTaskAppliesChanges() {
         Task existing = new Task();
-        existing.setId(5L);
+        existing.setId(TASK_ID);
         existing.setTitle("Draft");
         existing.setDescription("Initial");
-        existing.setStatus(TaskStatus.TODO);
-        existing.setPriority(TaskPriority.LOW);
+        existing.setStatus(TASK_STATUS);
+        existing.setPriority(TASK_PRIORITY);
 
-        when(taskRepository.findByIdAndOwnerUsername(5L, USER_A_USERNAME))
+        when(taskRepository.findByIdAndOwnerUsername(TASK_ID, USER_A_USERNAME))
                 .thenReturn(Optional.of(existing));
 
-        Task response = taskService.updateTask(USER_A_USERNAME, 5L, UPDATE_TASK_REQUEST);
+        Task response = taskService.updateTask(USER_A_USERNAME, TASK_ID, UPDATE_TASK_REQUEST);
 
         assertThat(response.getTitle()).isEqualTo(UPDATE_TASK_REQUEST.title());
         assertThat(response.getDescription()).isEqualTo(UPDATE_TASK_REQUEST.description());
@@ -122,11 +121,11 @@ class TaskServiceTest {
     @Test
     void deleteTaskRemovesEntity() {
         Task existing = new Task();
-        existing.setId(12L);
-        when(taskRepository.findByIdAndOwnerUsername(12L, USER_A_USERNAME))
+        existing.setId(TASK_ID);
+        when(taskRepository.findByIdAndOwnerUsername(TASK_ID, USER_A_USERNAME))
                 .thenReturn(Optional.of(existing));
 
-        taskService.deleteTask(USER_A_USERNAME, 12L);
+        taskService.deleteTask(USER_A_USERNAME, TASK_ID);
 
         verify(taskRepository).delete(existing);
     }

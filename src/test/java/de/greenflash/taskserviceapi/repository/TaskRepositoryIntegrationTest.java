@@ -1,5 +1,7 @@
 package de.greenflash.taskserviceapi.repository;
 
+import static de.greenflash.taskserviceapi.TestFixtures.TASK_PRIORITY;
+import static de.greenflash.taskserviceapi.TestFixtures.TASK_STATUS;
 import static de.greenflash.taskserviceapi.TestFixtures.USER_A_USERNAME;
 import static de.greenflash.taskserviceapi.TestFixtures.USER_B_USERNAME;
 import static de.greenflash.taskserviceapi.TestFixtures.userA;
@@ -9,8 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import de.greenflash.taskserviceapi.DockerAvailableCondition;
 import de.greenflash.taskserviceapi.TestcontainersConfiguration;
 import de.greenflash.taskserviceapi.entity.Task;
-import de.greenflash.taskserviceapi.entity.TaskPriority;
-import de.greenflash.taskserviceapi.entity.TaskStatus;
 import de.greenflash.taskserviceapi.entity.User;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -48,15 +48,15 @@ class TaskRepositoryIntegrationTest {
         Task taskA = new Task();
         taskA.setTitle("Task A");
         taskA.setDescription("Owned by A");
-        taskA.setStatus(TaskStatus.TODO);
-        taskA.setPriority(TaskPriority.HIGH);
+        taskA.setStatus(TASK_STATUS);
+        taskA.setPriority(TASK_PRIORITY);
         taskA.setOwner(ownerA);
 
         Task taskB = new Task();
         taskB.setTitle("Task B");
         taskB.setDescription("Owned by B");
-        taskB.setStatus(TaskStatus.TODO);
-        taskB.setPriority(TaskPriority.LOW);
+        taskB.setStatus(TASK_STATUS);
+        taskB.setPriority(TASK_PRIORITY);
         taskB.setOwner(ownerB);
 
         taskRepository.save(taskA);
@@ -76,8 +76,8 @@ class TaskRepositoryIntegrationTest {
         Task task = new Task();
         task.setTitle("Scoped Task");
         task.setDescription("Owned by A");
-        task.setStatus(TaskStatus.TODO);
-        task.setPriority(TaskPriority.MEDIUM);
+        task.setStatus(TASK_STATUS);
+        task.setPriority(TASK_PRIORITY);
         task.setOwner(owner);
         task = taskRepository.save(task);
 

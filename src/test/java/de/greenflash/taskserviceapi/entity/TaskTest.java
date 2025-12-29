@@ -3,7 +3,6 @@ package de.greenflash.taskserviceapi.entity;
 import static de.greenflash.taskserviceapi.TestFixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import de.greenflash.taskserviceapi.TestFixtures;
 import org.junit.jupiter.api.Test;
 
 class TaskTest {
@@ -21,8 +20,8 @@ class TaskTest {
         Task task = new Task();
         task.setTitle("Old");
         task.setDescription("Old desc");
-        task.setStatus(TaskStatus.TODO);
-        task.setPriority(TaskPriority.LOW);
+        task.setStatus(TASK_STATUS);
+        task.setPriority(TASK_PRIORITY);
 
         task.apply(UPDATE_TASK_REQUEST);
 

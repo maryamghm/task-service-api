@@ -13,5 +13,5 @@ spring:
 
 app:
   jwt:
-    secret: $SECRET
+    secret: ${SECRET}
     expiration-ms: 3600000

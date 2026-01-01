@@ -4,6 +4,7 @@ import com.example.taskserviceapi.AbstractMockMvcUnitTest;
 import com.example.taskserviceapi.dto.CreateTaskRequest;
 import com.example.taskserviceapi.entity.Task;
 import com.example.taskserviceapi.service.TaskService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -36,7 +37,7 @@ class TaskControllerUnitTest extends AbstractMockMvcUnitTest {
 
     private MockMvc mockMvc;
 
-    @org.junit.jupiter.api.BeforeEach
+    @BeforeEach
     void setUp() {
         mockMvc = buildStandaloneMockMvc(new TaskController(taskService));
     }

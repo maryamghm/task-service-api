@@ -2,6 +2,7 @@ package com.example.taskserviceapi.controller;
 
 import com.example.taskserviceapi.AbstractMockMvcUnitTest;
 import com.example.taskserviceapi.security.JwtService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -32,7 +33,7 @@ class AuthControllerUnitTest extends AbstractMockMvcUnitTest {
 
     private MockMvc mockMvc;
 
-    @org.junit.jupiter.api.BeforeEach
+    @BeforeEach
     void setUp() {
         mockMvc = buildStandaloneMockMvc(new AuthController(authenticationManager, jwtService));
     }

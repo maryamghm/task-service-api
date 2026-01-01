@@ -1,13 +1,5 @@
 package com.example.taskserviceapi.controller;
 
-import static com.example.taskserviceapi.TestFixtures.USER_A_PASSWORD;
-import static com.example.taskserviceapi.TestFixtures.USER_A_USERNAME;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.example.taskserviceapi.AbstractMockMvcUnitTest;
 import com.example.taskserviceapi.security.JwtService;
 import org.junit.jupiter.api.Test;
@@ -19,6 +11,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static com.example.taskserviceapi.TestFixtures.USER_A_PASSWORD;
+import static com.example.taskserviceapi.TestFixtures.USER_A_USERNAME;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class AuthControllerUnitTest extends AbstractMockMvcUnitTest {

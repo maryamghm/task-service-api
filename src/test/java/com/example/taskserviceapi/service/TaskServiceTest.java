@@ -1,26 +1,9 @@
 package com.example.taskserviceapi.service;
 
-import static com.example.taskserviceapi.TestFixtures.CREATE_TASK_REQUEST;
-import static com.example.taskserviceapi.TestFixtures.TASK_ID;
-import static com.example.taskserviceapi.TestFixtures.TASK_ID_NOT_FOUND;
-import static com.example.taskserviceapi.TestFixtures.TASK_PRIORITY;
-import static com.example.taskserviceapi.TestFixtures.TASK_STATUS;
-import static com.example.taskserviceapi.TestFixtures.TASK_TITLE;
-import static com.example.taskserviceapi.TestFixtures.UPDATE_TASK_REQUEST;
-import static com.example.taskserviceapi.TestFixtures.USER_A_USERNAME;
-import static com.example.taskserviceapi.TestFixtures.userA;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.example.taskserviceapi.entity.Task;
 import com.example.taskserviceapi.entity.User;
 import com.example.taskserviceapi.exception.ResourceNotFoundException;
 import com.example.taskserviceapi.repository.TaskRepository;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -30,6 +13,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+
+import java.util.List;
+import java.util.Optional;
+
+import static com.example.taskserviceapi.TestFixtures.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TaskServiceTest {

@@ -1,8 +1,9 @@
 package com.example.taskserviceapi.dto;
 
 import com.example.taskserviceapi.entity.Task;
-import java.util.List;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public record TaskPageResponse(
         List<TaskResponse> content,

@@ -1,8 +1,9 @@
 package com.example.taskserviceapi.dto;
 
+import com.example.taskserviceapi.entity.Task;
 import com.example.taskserviceapi.entity.TaskPriority;
 import com.example.taskserviceapi.entity.TaskStatus;
-import com.example.taskserviceapi.entity.Task;
+
 import java.time.Instant;
 
 public record TaskResponse(

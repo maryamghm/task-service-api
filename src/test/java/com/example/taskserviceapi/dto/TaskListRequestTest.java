@@ -3,6 +3,7 @@ package com.example.taskserviceapi.dto;
 import com.example.taskserviceapi.exception.BadRequestException;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 import static com.example.taskserviceapi.TestFixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,7 +73,7 @@ class TaskListRequestTest {
 
         Sort sort = request.getSort();
 
-        assertThat(sort.getOrderFor(SORT_CREATED_AT).getDirection()).isEqualTo(Sort.Direction.ASC);
+        assertThat(sort.getOrderFor(SORT_CREATED_AT).getDirection()).isEqualTo(Direction.ASC);
     }
 
     @Test
@@ -81,7 +82,7 @@ class TaskListRequestTest {
 
         Sort sort = request.getSort();
 
-        assertThat(sort.getOrderFor(SORT_PRIORITY).getDirection()).isEqualTo(Sort.Direction.DESC);
+        assertThat(sort.getOrderFor(SORT_PRIORITY).getDirection()).isEqualTo(Direction.DESC);
     }
 
     @Test
@@ -90,6 +91,6 @@ class TaskListRequestTest {
 
         Sort sort = request.getSort();
 
-        assertThat(sort.getOrderFor(SORT_CREATED_AT).getDirection()).isEqualTo(Sort.Direction.ASC);
+        assertThat(sort.getOrderFor(SORT_CREATED_AT).getDirection()).isEqualTo(Direction.ASC);
     }
 }

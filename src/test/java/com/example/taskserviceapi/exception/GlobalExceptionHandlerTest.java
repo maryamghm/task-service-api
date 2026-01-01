@@ -1,19 +1,19 @@
 package com.example.taskserviceapi.exception;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import static com.example.taskserviceapi.TestFixtures.INVALID_CREATE_TASK_REQUEST;
-
 import com.example.taskserviceapi.dto.CreateTaskRequest;
 import jakarta.validation.ConstraintViolationException;
-import java.lang.reflect.Method;
-import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+
+import java.lang.reflect.Method;
+import java.util.Set;
+
+import static com.example.taskserviceapi.TestFixtures.INVALID_CREATE_TASK_REQUEST;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class GlobalExceptionHandlerTest {
 

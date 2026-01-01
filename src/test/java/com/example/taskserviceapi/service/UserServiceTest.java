@@ -1,19 +1,7 @@
 package com.example.taskserviceapi.service;
 
-import static com.example.taskserviceapi.TestFixtures.USER_A_USERNAME;
-import static com.example.taskserviceapi.TestFixtures.USER_B_USERNAME;
-import static com.example.taskserviceapi.TestFixtures.userA;
-import static com.example.taskserviceapi.TestFixtures.userB;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.example.taskserviceapi.entity.User;
 import com.example.taskserviceapi.repository.UserRepository;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -23,6 +11,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.List;
+import java.util.Optional;
+
+import static com.example.taskserviceapi.TestFixtures.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {

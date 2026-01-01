@@ -1,19 +1,14 @@
 package com.example.taskserviceapi.security;
 
+import com.example.taskserviceapi.config.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import com.example.taskserviceapi.config.JwtProperties;
-import java.time.Instant;
-import java.util.Date;
-
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.time.Instant;
+import java.util.Date;
 
 @Component
 @RequiredArgsConstructor

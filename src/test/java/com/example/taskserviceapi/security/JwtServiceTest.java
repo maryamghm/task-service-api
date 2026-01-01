@@ -1,15 +1,16 @@
 package com.example.taskserviceapi.security;
 
+import com.example.taskserviceapi.config.JwtProperties;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.security.Keys;
+import org.junit.jupiter.api.Test;
+
+import java.nio.charset.StandardCharsets;
+
 import static com.example.taskserviceapi.TestFixtures.JWT_SECRET;
 import static com.example.taskserviceapi.TestFixtures.USER_A_USERNAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import com.example.taskserviceapi.config.JwtProperties;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.security.Keys;
-import java.nio.charset.StandardCharsets;
-import org.junit.jupiter.api.Test;
 
 class JwtServiceTest {
 

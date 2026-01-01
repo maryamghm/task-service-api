@@ -4,13 +4,13 @@ import com.example.taskserviceapi.dto.CreateTaskRequest;
 import com.example.taskserviceapi.dto.UpdateTaskRequest;
 import com.example.taskserviceapi.entity.Task;
 import com.example.taskserviceapi.entity.User;
+import com.example.taskserviceapi.exception.ResourceNotFoundException;
 import com.example.taskserviceapi.repository.TaskRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.example.taskserviceapi.exception.ResourceNotFoundException;
 
 @Service
 @Transactional

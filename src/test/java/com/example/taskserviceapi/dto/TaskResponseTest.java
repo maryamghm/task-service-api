@@ -1,13 +1,12 @@
 package com.example.taskserviceapi.dto;
 
-import static com.example.taskserviceapi.TestFixtures.TASK_ID;
-import static com.example.taskserviceapi.TestFixtures.TASK_PRIORITY;
-import static com.example.taskserviceapi.TestFixtures.TASK_STATUS;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.example.taskserviceapi.entity.Task;
-import java.time.Instant;
 import org.junit.jupiter.api.Test;
+
+import java.time.Instant;
+
+import static com.example.taskserviceapi.TestFixtures.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class TaskResponseTest {
 

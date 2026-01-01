@@ -30,7 +30,7 @@ export SECRET="your-secret-value"
 The API runs on `http://localhost:8080` by default.
 
 ## Run tests
-Tests use Testcontainers and the schema in `src/test/resources/init.sql`.
+Tests use Testcontainers and the schema in `src/main/resources/init.sql`.
 
 ```bash
 ./mvnw test

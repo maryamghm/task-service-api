@@ -1,34 +1,19 @@
 package de.greenflash.taskserviceapi.repository;
 
-import de.greenflash.taskserviceapi.DockerAvailableCondition;
-import de.greenflash.taskserviceapi.TestcontainersConfiguration;
+import de.greenflash.taskserviceapi.AbstractIntegrationTest;
 import de.greenflash.taskserviceapi.entity.Task;
 import de.greenflash.taskserviceapi.entity.User;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
 
 import static de.greenflash.taskserviceapi.TestFixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@Import(TestcontainersConfiguration.class)
-@TestPropertySource(properties = {
-        "spring.jpa.hibernate.ddl-auto=create-drop",
-        "spring.test.database.replace=NONE"
-})
-@ExtendWith(DockerAvailableCondition.class)
-class TaskRepositoryIntegrationTest {
-
-    @Autowired
-    private TaskRepository taskRepository;
+class TaskRepositoryIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;

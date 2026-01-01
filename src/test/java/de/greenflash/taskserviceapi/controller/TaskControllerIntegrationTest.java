@@ -3,15 +3,9 @@ package de.greenflash.taskserviceapi.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.greenflash.taskserviceapi.AbstractMockMvcIntegrationTest;
-import de.greenflash.taskserviceapi.DockerAvailableCondition;
-import de.greenflash.taskserviceapi.TestcontainersConfiguration;
 import de.greenflash.taskserviceapi.entity.TaskPriority;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static de.greenflash.taskserviceapi.TestFixtures.*;
@@ -21,10 +15,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@Import(TestcontainersConfiguration.class)
-@TestPropertySource(properties = "spring.jpa.hibernate.ddl-auto=create-drop")
-@ExtendWith(DockerAvailableCondition.class)
 class TaskControllerIntegrationTest extends AbstractMockMvcIntegrationTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();

@@ -1,38 +1,22 @@
 package de.greenflash.taskserviceapi;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
+
 import static de.greenflash.taskserviceapi.TestFixtures.TASK_PRIORITY;
 import static de.greenflash.taskserviceapi.TestFixtures.TASK_STATUS;
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import de.greenflash.taskserviceapi.AbstractMockMvcIntegrationTest;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MvcResult;
-import de.greenflash.taskserviceapi.repository.TaskRepository;
 
-@SpringBootTest
 class TaskControllerTest extends AbstractMockMvcIntegrationTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-
-    @Autowired
-    private TaskRepository taskRepository;
-
-    @BeforeEach
-    void setUp() {
-        taskRepository.deleteAll();
-    }
 
     @Test
     void rejectsAnonymousAccess() throws Exception {

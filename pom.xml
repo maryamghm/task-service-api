@@ -8,7 +8,7 @@
         <version>4.0.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>de.greenflash</groupId>
+    <groupId>com.example</groupId>
     <artifactId>task-service-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>task-service-api</name>

@@ -119,6 +119,32 @@ class TaskControllerUnitTest extends AbstractMockMvcUnitTest {
     }
 
     @Test
+    void listTasksRejectsInvalidSortDirection() throws Exception {
+        mockMvc.perform(get("/api/task")
+                        .principal(userAuth())
+                        .param("sortProperty", "createdAt")
+                        .param("sortDir", "sideways"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("Sort direction must be asc or desc"));
+
+        verifyNoInteractions(taskService);
+    }
+
+    @Test
+    void listTasksRejectsInvalidPagination() throws Exception {
+        mockMvc.perform(get("/api/task")
+                        .principal(userAuth())
+                        .param("page", "-1")
+                        .param("size", "0"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("Validation failed"));
+
+        verifyNoInteractions(taskService);
+    }
+
+    @Test
     void getTaskMapsResponse() throws Exception {
         Task task = new Task();
         task.setId(TASK_ID);

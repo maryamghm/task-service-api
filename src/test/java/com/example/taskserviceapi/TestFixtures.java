@@ -42,6 +42,13 @@ public final class TestFixtures {
             TASK_STATUS,
             TASK_PRIORITY);
 
+    public static final String SORT_CREATED_AT = "createdAt";
+    public static final String SORT_PRIORITY = "priority";
+    public static final String SORT_ASC = "asc";
+    public static final String SORT_DESC = "desc";
+    public static final String SORT_INVALID_FIELD = "title";
+    public static final String SORT_INVALID_DIR = "sideways";
+
     public static final String JWT_SECRET = "test-secret-should-be-long-enough-for-hmac-signing-32bytes";
 
     private TestFixtures() {

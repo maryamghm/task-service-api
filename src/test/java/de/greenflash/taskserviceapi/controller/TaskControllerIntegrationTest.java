@@ -1,57 +1,39 @@
 package de.greenflash.taskserviceapi.controller;
 
-import static de.greenflash.taskserviceapi.TestFixtures.TASK_PRIORITY;
-import static de.greenflash.taskserviceapi.TestFixtures.USER_A_PASSWORD;
-import static de.greenflash.taskserviceapi.TestFixtures.USER_A_USERNAME;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.greenflash.taskserviceapi.AbstractMockMvcIntegrationTest;
+import de.greenflash.taskserviceapi.DockerAvailableCondition;
+import de.greenflash.taskserviceapi.TestcontainersConfiguration;
+import de.greenflash.taskserviceapi.entity.TaskPriority;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.MvcResult;
+
+import static de.greenflash.taskserviceapi.TestFixtures.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.greenflash.taskserviceapi.TestcontainersConfiguration;
-import de.greenflash.taskserviceapi.DockerAvailableCondition;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
 @TestPropertySource(properties = "spring.jpa.hibernate.ddl-auto=create-drop")
 @ExtendWith(DockerAvailableCondition.class)
-class TaskControllerIntegrationTest {
-
-    private MockMvc mockMvc;
+class TaskControllerIntegrationTest extends AbstractMockMvcIntegrationTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
-    @BeforeEach
-    void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(springSecurity())
-                .build();
-    }
 
     @Test
     void listTasksSupportsPagination() throws Exception {
         String token = login(USER_A_USERNAME, USER_A_PASSWORD);
-        createTask(token, "Task 1", "First");
-        createTask(token, "Task 2", "Second");
+        createTask(token, "Task 1", "First", TASK_PRIORITY);
+        createTask(token, "Task 2", "Second", TASK_PRIORITY);
 
         mockMvc.perform(get("/api/task")
                         .param("page", "0")
@@ -62,11 +44,27 @@ class TaskControllerIntegrationTest {
     }
 
     @Test
+    void listTasksSupportsOrdering() throws Exception {
+        String token = login(USER_A_USERNAME, USER_A_PASSWORD);
+        createTask(token, "Task 1", "First", TaskPriority.HIGH);
+        createTask(token, "Task 2", "Second", TaskPriority.LOW);
+
+        mockMvc.perform(get("/api/task")
+                        .param("sortProperty", "priority")
+                        .param("sortDir", "asc")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].title").value("Task 2"))
+                .andExpect(jsonPath("$.content[1].title").value("Task 1"));
+    }
+
+    @Test
     void invalidSortFieldReturnsBadRequest() throws Exception {
         String token = login(USER_A_USERNAME, USER_A_PASSWORD);
 
         mockMvc.perform(get("/api/task")
-                        .param("sort", "title,desc")
+                        .param("sortProperty", "title")
+                        .param("sortDir", "desc")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
@@ -92,14 +90,14 @@ class TaskControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Validation failed"));
     }
 
-    private void createTask(String token, String title, String description) throws Exception {
+    private void createTask(String token, String title, String description, TaskPriority priority) throws Exception {
         String payload = """
                 {
                   "title": "%s",
                   "description": "%s",
                   "priority": "%s"
                 }
-                """.formatted(title, description, TASK_PRIORITY.name());
+                """.formatted(title, description, priority.name());
 
         mockMvc.perform(post("/api/task")
                         .header("Authorization", "Bearer " + token)

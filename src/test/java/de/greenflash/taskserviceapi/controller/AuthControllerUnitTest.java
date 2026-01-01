@@ -8,24 +8,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import de.greenflash.taskserviceapi.exception.GlobalExceptionHandler;
+import de.greenflash.taskserviceapi.AbstractMockMvcUnitTest;
 import de.greenflash.taskserviceapi.security.JwtService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.verification.VerificationMode;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @ExtendWith(MockitoExtension.class)
-class AuthControllerUnitTest {
+class AuthControllerUnitTest extends AbstractMockMvcUnitTest {
 
     @Mock
     private AuthenticationManager authenticationManager;
@@ -35,15 +31,9 @@ class AuthControllerUnitTest {
 
     private MockMvc mockMvc;
 
-    @BeforeEach
+    @org.junit.jupiter.api.BeforeEach
     void setUp() {
-        LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
-        validator.afterPropertiesSet();
-
-        mockMvc = MockMvcBuilders.standaloneSetup(new AuthController(authenticationManager, jwtService))
-                .setControllerAdvice(new GlobalExceptionHandler())
-                .setValidator(validator)
-                .build();
+        mockMvc = buildStandaloneMockMvc(new AuthController(authenticationManager, jwtService));
     }
 
     @Test

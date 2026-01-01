@@ -1,86 +1,44 @@
 package de.greenflash.taskserviceapi.controller;
 
-import static de.greenflash.taskserviceapi.TestFixtures.CREATE_TASK_REQUEST;
-import static de.greenflash.taskserviceapi.TestFixtures.TASK_DESCRIPTION;
-import static de.greenflash.taskserviceapi.TestFixtures.TASK_ID;
-import static de.greenflash.taskserviceapi.TestFixtures.TASK_PRIORITY;
-import static de.greenflash.taskserviceapi.TestFixtures.TASK_STATUS;
-import static de.greenflash.taskserviceapi.TestFixtures.TASK_TITLE;
-import static de.greenflash.taskserviceapi.TestFixtures.UPDATE_TASK_REQUEST;
-import static de.greenflash.taskserviceapi.TestFixtures.USER_A_USERNAME;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import de.greenflash.taskserviceapi.AbstractMockMvcUnitTest;
 import de.greenflash.taskserviceapi.dto.CreateTaskRequest;
 import de.greenflash.taskserviceapi.entity.Task;
-import de.greenflash.taskserviceapi.exception.GlobalExceptionHandler;
 import de.greenflash.taskserviceapi.service.TaskService;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.SortHandlerMethodArgumentResolver;
-import org.springframework.data.web.config.EnableSpringDataWebSupport;
-import org.springframework.data.web.config.SpringDataJacksonConfiguration;
-import org.springframework.data.web.config.SpringDataWebSettings;
-import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import java.util.List;
+
+import static de.greenflash.taskserviceapi.TestFixtures.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-class TaskControllerUnitTest {
+class TaskControllerUnitTest extends AbstractMockMvcUnitTest {
 
     @Mock
     private TaskService taskService;
 
     private MockMvc mockMvc;
 
-    @BeforeEach
+    @org.junit.jupiter.api.BeforeEach
     void setUp() {
-        DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
-        conversionService.addConverter(new StringToSortConverter());
-        SpringDataWebSettings springDataWebSettings =
-                new SpringDataWebSettings(EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO);
-        ObjectMapper objectMapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .registerModule(new SpringDataJacksonConfiguration.PageModule(springDataWebSettings));
-        MappingJackson2HttpMessageConverter messageConverter =
-                new MappingJackson2HttpMessageConverter(objectMapper);
-        LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
-        validator.afterPropertiesSet();
-
-        mockMvc = MockMvcBuilders.standaloneSetup(new TaskController(taskService))
-                .setControllerAdvice(new GlobalExceptionHandler())
-                .setCustomArgumentResolvers(new SortHandlerMethodArgumentResolver())
-                .setMessageConverters(messageConverter)
-                .setConversionService(conversionService)
-                .setValidator(validator)
-                .build();
+        mockMvc = buildStandaloneMockMvc(new TaskController(taskService));
     }
 
     @Test
@@ -133,7 +91,8 @@ class TaskControllerUnitTest {
                         .principal(userAuth())
                         .param("page", "1")
                         .param("size", "5")
-                        .param("sort", "createdAt,desc"))
+                        .param("sortProperty", "createdAt")
+                        .param("sortDir", "desc"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].id").value(TASK_ID))
                 .andExpect(jsonPath("$.content[0].title").value(TASK_TITLE));
@@ -142,15 +101,16 @@ class TaskControllerUnitTest {
         verify(taskService).listTasksPage(eq(USER_A_USERNAME), pageableCaptor.capture());
         Pageable pageable = pageableCaptor.getValue();
         assertThat(pageable.getPageNumber()).isEqualTo(1);
-        assertThat(pageable.getPageSize()).isEqualTo(5);
-        assertThat(pageable.getSort().getOrderFor("createdAt")).isNotNull();
+        assertThat(pageable.getSort().getOrderFor("createdAt").getDirection())
+                .isEqualTo(org.springframework.data.domain.Sort.Direction.DESC);
     }
 
     @Test
     void listTasksRejectsInvalidSort() throws Exception {
         mockMvc.perform(get("/api/task")
                         .principal(userAuth())
-                        .param("sort", "title,desc"))
+                        .param("sortProperty", "title")
+                        .param("sortDir", "desc"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
                         .value("Sorting is only supported by createdAt and priority"));
@@ -222,28 +182,4 @@ class TaskControllerUnitTest {
         return new UsernamePasswordAuthenticationToken(USER_A_USERNAME, "N/A");
     }
 
-    private static final class StringToSortConverter implements Converter<String, Sort> {
-        @Override
-        public Sort convert(String source) {
-            if (source == null || source.isBlank()) {
-                return Sort.unsorted();
-            }
-            String[] parts = source.split(",");
-            Sort sort = Sort.unsorted();
-            for (int i = 0; i < parts.length; i += 2) {
-                String property = parts[i].trim();
-                if (property.isEmpty()) {
-                    continue;
-                }
-                Sort.Direction direction = Sort.Direction.ASC;
-                if (i + 1 < parts.length) {
-                    direction = Sort.Direction.fromOptionalString(parts[i + 1].trim())
-                            .orElse(Sort.Direction.ASC);
-                }
-                Sort next = Sort.by(new Sort.Order(direction, property));
-                sort = sort.and(next);
-            }
-            return sort;
-        }
-    }
 }

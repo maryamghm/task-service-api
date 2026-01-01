@@ -1,18 +1,9 @@
 package de.greenflash.taskserviceapi.repository;
 
-import static de.greenflash.taskserviceapi.TestFixtures.TASK_PRIORITY;
-import static de.greenflash.taskserviceapi.TestFixtures.TASK_STATUS;
-import static de.greenflash.taskserviceapi.TestFixtures.USER_A_USERNAME;
-import static de.greenflash.taskserviceapi.TestFixtures.USER_B_USERNAME;
-import static de.greenflash.taskserviceapi.TestFixtures.userA;
-import static de.greenflash.taskserviceapi.TestFixtures.userB;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import de.greenflash.taskserviceapi.DockerAvailableCondition;
 import de.greenflash.taskserviceapi.TestcontainersConfiguration;
 import de.greenflash.taskserviceapi.entity.Task;
 import de.greenflash.taskserviceapi.entity.User;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +12,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.TestPropertySource;
+
+import java.util.Optional;
+
+import static de.greenflash.taskserviceapi.TestFixtures.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
@@ -39,11 +35,8 @@ class TaskRepositoryIntegrationTest {
 
     @Test
     void findByOwnerUsernameReturnsScopedTasks() {
-        User ownerA = userA();
-        User ownerB = userB();
-
-        ownerA = userRepository.save(ownerA);
-        ownerB = userRepository.save(ownerB);
+        User ownerA = userRepository.findByUsername(USER_A_USERNAME).get();
+        User ownerB = userRepository.findByUsername(USER_B_USERNAME).get();
 
         Task taskA = new Task();
         taskA.setTitle("Task A");
@@ -70,8 +63,7 @@ class TaskRepositoryIntegrationTest {
 
     @Test
     void findByIdAndOwnerUsernameScopesLookup() {
-        User owner = userA();
-        owner = userRepository.save(owner);
+        User owner = userRepository.findByUsername(USER_A_USERNAME).get();
 
         Task task = new Task();
         task.setTitle("Scoped Task");

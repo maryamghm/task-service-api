@@ -39,7 +39,7 @@ public class Task {
     @Column(nullable = false)
     private TaskStatus status;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     @Column(nullable = false)
     private TaskPriority priority;
 

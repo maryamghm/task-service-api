@@ -35,7 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = resolveToken(request);
         if (token != null) {
             try {
-                authenticate(token, request);
+                authenticate(token);
             } catch (JwtException ex) {
                 // Invalid JWT; proceed without authentication.
                 SecurityContextHolder.clearContext();
@@ -53,7 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
         return authHeader.substring(BEARER_PREFIX.length());
     }
 
-    private void authenticate(String token, HttpServletRequest request) {
+    private void authenticate(String token) {
         String username = jwtService.extractUsername(token);
         if (username == null || SecurityContextHolder.getContext().getAuthentication() != null) {
             return;
